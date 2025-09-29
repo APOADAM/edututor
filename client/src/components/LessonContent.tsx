@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, BookOpen, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import ExerciseHint from "./ExerciseHint";
 
 interface LessonContentProps {
   subchapter: {
@@ -24,6 +26,20 @@ export default function LessonContent({
   canGoBack, 
   canGoForward 
 }: LessonContentProps) {
+  
+  // Handle undefined subchapter
+  if (!subchapter) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">No content available</h2>
+          <p className="text-muted-foreground">Please select a lesson to continue.</p>
+        </div>
+      </div>
+    );
+  }
+  const { t } = useTranslation();
+
   const renderTheoryContent = (content: any) => (
     <div className="space-y-6">
       <div className="prose prose-lg max-w-none">
@@ -36,7 +52,7 @@ export default function LessonContent({
             <p className="mb-4">{section.text}</p>
             {section.examples && (
               <div className="bg-muted/50 p-4 rounded-lg mb-4">
-                <h4 className="font-medium mb-2">Examples:</h4>
+                <h4 className="font-medium mb-2">{t('examples')}</h4>
                 <ul className="space-y-1">
                   {section.examples.map((example: string, i: number) => (
                     <li key={i} className="text-sm font-mono">{example}</li>
@@ -57,7 +73,7 @@ export default function LessonContent({
         <p className="text-muted-foreground">{content.description}</p>
         <div className="flex items-center justify-center gap-4 mt-4">
           <Badge variant="outline">
-            {content.questions.length} Questions
+            {content.questions.length} {t('questions')}
           </Badge>
           <Badge variant="outline">
             <Clock className="w-3 h-3 mr-1" />
@@ -69,9 +85,24 @@ export default function LessonContent({
       {content.questions.map((question: any, index: number) => (
         <Card key={index} className="mb-6">
           <CardHeader>
-            <CardTitle className="text-lg">
-              Question {index + 1}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">
+                {t('question')} {index + 1}
+              </CardTitle>
+              <ExerciseHint 
+                questionIndex={index}
+                hintContent={{
+                  title: `${t('question')} ${index + 1} ${t('hint')}`,
+                  description: "Here's some helpful theory to solve this question.",
+                  theory: [
+                    "A fraction represents a part of a whole. The numerator (top number) shows how many parts you have.",
+                    "The denominator (bottom number) shows how many equal parts the whole is divided into.",
+                    "To compare fractions, think about which represents a larger portion of the whole."
+                  ],
+                  examples: ["1/2 = one half", "3/4 = three quarters", "2/3 = two thirds"]
+                }}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
@@ -100,7 +131,7 @@ export default function LessonContent({
 
       <div className="text-center">
         <Button className="px-8" data-testid="button-submit-exercise">
-          Submit Answers
+          {t('submit_answers')}
         </Button>
       </div>
     </div>
@@ -120,7 +151,7 @@ export default function LessonContent({
           <h1 className="text-xl font-semibold">{subchapter.title}</h1>
         </div>
         <div className="text-sm text-muted-foreground">
-          Progress: 3/6 lessons completed
+          {t('progress')}: 3/6 {t('lessons')} {t('complete')}
         </div>
       </div>
 
@@ -146,14 +177,14 @@ export default function LessonContent({
           data-testid="button-previous"
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
-          Previous
+          {t('previous')}
         </Button>
         <Button 
           onClick={onNext}
           disabled={!canGoForward}
           data-testid="button-next"
         >
-          Next
+          {t('next')}
           <ChevronRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

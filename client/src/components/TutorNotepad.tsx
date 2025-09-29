@@ -11,6 +11,7 @@ import {
   Download,
   Trash2
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const colors = [
   "#000000", // Black
@@ -33,6 +34,7 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(3);
   const [notes, setNotes] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -120,7 +122,7 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Tutor Notepad</CardTitle>
+        <CardTitle className="text-lg">{t('tutor_notepad')}</CardTitle>
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col gap-4 p-4">
@@ -169,7 +171,7 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
 
         {/* Brush Size */}
         <div className="flex items-center gap-2">
-          <span className="text-sm">Size:</span>
+          <span className="text-sm">{t('size')}:</span>
           <input
             type="range"
             min="1"
@@ -221,9 +223,9 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
 
         {/* Text Notes */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Quick Notes:</label>
+          <label className="text-sm font-medium">{t('quick_notes')}</label>
           <textarea
-            placeholder="Add your notes here..."
+            placeholder={t('add_notes')}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             className="w-full h-24 p-2 border rounded-md text-sm resize-none"

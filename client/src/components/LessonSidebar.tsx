@@ -3,41 +3,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, BookOpen, CheckCircle2, Circle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const subchapters = [
+// This will be generated dynamically based on translations
+const getSubchapters = (t: any) => [
   {
     id: "intro",
-    title: "Introduction to Numbers",
+    title: t('intro_numbers'),
     type: "theory",
     isCompleted: true
   },
   {
     id: "counting",
-    title: "Counting & Place Value",
+    title: t('counting_place_value'),
     type: "theory", 
     isCompleted: true
   },
   {
     id: "exercise-1",
-    title: "Practice Exercise 1",
+    title: `${t('practice_exercise')} 1`,
     type: "exercise",
     isCompleted: true
   },
   {
     id: "fractions",
-    title: "Understanding Fractions",
+    title: t('understanding_fractions'),
     type: "theory",
     isCompleted: false
   },
   {
     id: "exercise-2", 
-    title: "Fraction Exercises",
+    title: t('fraction_exercises'),
     type: "exercise",
     isCompleted: false
   },
   {
     id: "decimals",
-    title: "Decimal Numbers",
+    title: t('decimal_numbers'),
     type: "theory",
     isCompleted: false
   }
@@ -50,12 +52,14 @@ interface LessonSidebarProps {
 
 export default function LessonSidebar({ currentSubchapter, onSubchapterSelect }: LessonSidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const { t } = useTranslation();
+  const subchapters = getSubchapters(t);
 
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Basic Numbers</CardTitle>
+          <CardTitle className="text-lg">{t('basic_numbers')}</CardTitle>
           <Button 
             variant="ghost" 
             size="icon"
@@ -66,7 +70,7 @@ export default function LessonSidebar({ currentSubchapter, onSubchapterSelect }:
           </Button>
         </div>
         <div className="text-sm text-muted-foreground">
-          Mathematics • Beginner
+          {t('mathematics')} • {t('beginner')}
         </div>
       </CardHeader>
       
@@ -103,7 +107,7 @@ export default function LessonSidebar({ currentSubchapter, onSubchapterSelect }:
                     {subchapter.type === "theory" ? (
                       <BookOpen className="w-3 h-3 mr-1" />
                     ) : null}
-                    {subchapter.type}
+                    {t(subchapter.type)}
                   </Badge>
                 </div>
               </div>

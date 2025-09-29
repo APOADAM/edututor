@@ -2,30 +2,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, Code, Languages, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const subjects = [
+const getSubjects = (t: any) => [
   {
     id: "math",
-    name: "Mathematics",
-    description: "Algebra, Geometry, Calculus and more",
+    name: t('mathematics'),
+    description: t('math_description'),
     icon: Calculator,
-    levels: ["Beginner", "Intermediate", "Advanced"],
+    levels: [t('beginner'), t('intermediate'), t('advanced')],
     color: "bg-blue-500/10 text-blue-700"
   },
   {
     id: "programming",
-    name: "Computer Programming", 
-    description: "Learn coding fundamentals and advanced concepts",
+    name: t('programming'), 
+    description: t('programming_description'),
     icon: Code,
-    levels: ["Beginner", "Intermediate", "Advanced"],
+    levels: [t('beginner'), t('intermediate'), t('advanced')],
     color: "bg-green-500/10 text-green-700"
   },
   {
     id: "languages",
-    name: "Language Learning",
-    description: "Master new languages with interactive exercises",
+    name: t('languages'),
+    description: t('languages_description'),
     icon: Languages,
-    levels: ["Beginner", "Intermediate", "Advanced"],
+    levels: [t('beginner'), t('intermediate'), t('advanced')],
     color: "bg-purple-500/10 text-purple-700"
   }
 ];
@@ -36,13 +37,15 @@ interface SubjectSelectionProps {
 }
 
 export default function SubjectSelection({ userRole, onSubjectSelect }: SubjectSelectionProps) {
+  const { t } = useTranslation();
+  const subjects = getSubjects(t);
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold mb-2">Choose a Subject</h1>
+          <h1 className="text-3xl font-semibold mb-2">{t('choose_subject')}</h1>
           <p className="text-muted-foreground">
-            Select the subject you'd like to {userRole === "tutor" ? "teach" : "learn"} today
+            {userRole === "tutor" ? t('subject_description_tutor') : t('subject_description_student')}
           </p>
         </div>
 
@@ -78,7 +81,7 @@ export default function SubjectSelection({ userRole, onSubjectSelect }: SubjectS
                     className="w-full"
                     data-testid={`button-select-${subject.id}`}
                   >
-                    Start Learning
+                    {t('start_learning')}
                   </Button>
                 </CardContent>
               </Card>

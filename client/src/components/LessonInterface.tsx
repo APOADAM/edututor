@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSelector } from "./LanguageSelector";
 import LessonSidebar from "./LessonSidebar";
 import LessonContent from "./LessonContent";
 import TutorNotepad from "./TutorNotepad";
-import { LogOut, Home, Settings } from "lucide-react";
+import ResizableLayout from "./ResizableLayout";
+import { LogOut, Home, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 // Mock lesson data
 const lessonData = {
@@ -83,6 +86,9 @@ interface LessonInterfaceProps {
 
 export default function LessonInterface({ userRole, onLogout }: LessonInterfaceProps) {
   const [currentSubchapter, setCurrentSubchapter] = useState("fractions");
+  const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor");
+  const { t } = useTranslation();
   
   const subchapterIds = Object.keys(lessonData);
   const currentIndex = subchapterIds.indexOf(currentSubchapter);
@@ -105,17 +111,26 @@ export default function LessonInterface({ userRole, onLogout }: LessonInterfaceP
       {/* Header */}
       <header className="border-b px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setShowLeftPanel(!showLeftPanel)}
+            data-testid="button-toggle-sidebar"
+          >
+            {showLeftPanel ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+          </Button>
           <Button variant="ghost" size="icon" data-testid="button-home">
             <Home className="w-5 h-5" />
           </Button>
           <div>
             <h1 className="font-semibold">EduTutor</h1>
-            <p className="text-sm text-muted-foreground">Mathematics • Beginner • Basic Numbers</p>
+            <p className="text-sm text-muted-foreground">{t('mathematics')} • {t('beginner')} • {t('basic_numbers')}</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground capitalize">{userRole}</span>
+          <LanguageSelector />
           <ThemeToggle />
           <Button variant="ghost" size="icon" data-testid="button-settings">
             <Settings className="w-5 h-5" />
@@ -127,32 +142,35 @@ export default function LessonInterface({ userRole, onLogout }: LessonInterfaceP
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar - Subchapters */}
-        <div className="w-80 border-r p-4 overflow-auto">
-          <LessonSidebar 
-            currentSubchapter={currentSubchapter}
-            onSubchapterSelect={setCurrentSubchapter}
-          />
-        </div>
-
-        {/* Main Content Area */}
-        <div className="flex-1 overflow-hidden">
-          <LessonContent
-            subchapter={currentLesson}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-            canGoBack={currentIndex > 0}
-            canGoForward={currentIndex < subchapterIds.length - 1}
-          />
-        </div>
-
-        {/* Right Sidebar - Tutor Notepad */}
-        {userRole === "tutor" && (
-          <div className="w-80 border-l p-4 overflow-auto">
-            <TutorNotepad isVisible={true} />
-          </div>
-        )}
+      <div className="flex-1 overflow-hidden">
+        <ResizableLayout
+          leftPanel={
+            <LessonSidebar 
+              currentSubchapter={currentSubchapter}
+              onSubchapterSelect={setCurrentSubchapter}
+            />
+          }
+          centerPanel={
+            <LessonContent
+              subchapter={currentLesson}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              canGoBack={currentIndex > 0}
+              canGoForward={currentIndex < subchapterIds.length - 1}
+            />
+          }
+          rightPanel={
+            userRole === "tutor" ? (
+              <TutorNotepad isVisible={true} />
+            ) : undefined
+          }
+          showLeftPanel={showLeftPanel}
+          showRightPanel={showRightPanel}
+          leftPanelDefaultSize={20}
+          rightPanelDefaultSize={25}
+          leftPanelMinSize={15}
+          rightPanelMinSize={20}
+        />
       </div>
     </div>
   );

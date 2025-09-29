@@ -1,19 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Users } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface RoleSelectionProps {
   onRoleSelect: (role: "tutor" | "student") => void;
 }
 
 export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold mb-2">Select Your Role</h1>
+          <h1 className="text-3xl font-semibold mb-2">{t('select_role')}</h1>
           <p className="text-muted-foreground">
-            Choose how you'll be using the platform today
+            {t('role_description')}
           </p>
         </div>
         
@@ -23,9 +25,9 @@ export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <GraduationCap className="w-8 h-8 text-primary" />
               </div>
-              <CardTitle>I'm a Tutor</CardTitle>
+              <CardTitle>{t('im_tutor')}</CardTitle>
               <CardDescription>
-                Teach students with interactive lessons and real-time notepad tools
+                {t('tutor_description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -34,7 +36,7 @@ export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
                 variant="outline"
                 data-testid="button-select-tutor"
               >
-                Continue as Tutor
+                {t('continue_as_tutor')}
               </Button>
             </CardContent>
           </Card>
@@ -44,9 +46,9 @@ export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
               <div className="w-16 h-16 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-secondary-foreground" />
               </div>
-              <CardTitle>I'm a Student</CardTitle>
+              <CardTitle>{t('im_student')}</CardTitle>
               <CardDescription>
-                Learn through interactive exercises and engaging lesson content
+                {t('student_description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -55,7 +57,7 @@ export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
                 variant="outline"
                 data-testid="button-select-student"
               >
-                Continue as Student
+                {t('continue_as_student')}
               </Button>
             </CardContent>
           </Card>

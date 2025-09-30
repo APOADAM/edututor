@@ -3,44 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, Trophy, Clock, BookOpen } from "lucide-react";
+import { levelsBySubject } from "@/components/levels";
+import LayoutWithMenu from "@/components/LayoutWithMenu";
 
-const levels = [
-  {
-    id: "beginner",
-    name: "Beginner",
-    description: "Start with the fundamentals",
-    chapters: 8,
-    estimatedTime: "2-3 hours",
-    progress: 0,
-    difficulty: "Easy"
-  },
-  {
-    id: "intermediate", 
-    name: "Intermediate",
-    description: "Build upon your knowledge",
-    chapters: 12,
-    estimatedTime: "4-5 hours", 
-    progress: 0,
-    difficulty: "Medium"
-  },
-  {
-    id: "advanced",
-    name: "Advanced",
-    description: "Master complex concepts",
-    chapters: 15,
-    estimatedTime: "6-8 hours",
-    progress: 0,
-    difficulty: "Hard"
-  }
-];
+type SubjectKey = keyof typeof levelsBySubject;
 
-interface LevelSelectionProps {
-  subject: string;
-  onLevelSelect: (levelId: string) => void;
-  onBack: () => void;
+interface Level {
+  id: string;
+  name: string;
+  description: string;
+  chapters: number;
+  estimatedTime: string;
+  progress: number;
+  difficulty: string;
 }
 
-export default function LevelSelection({ subject, onLevelSelect, onBack }: LevelSelectionProps) {
+interface LevelSelectionProps {
+  subject: string; // Θα πρέπει να ταιριάζει με τα keys του levelsBySubject
+  onLevelSelect: (levelId: string) => void;
+  onBack: () => void;
+  onLogout: () => void; // <-- προσθέτουμε εδώ
+}
+
+export default function LevelSelection({ subject, onLevelSelect, onBack , onLogout }: LevelSelectionProps) {
+  // Type-safe access
+  const levels: Level[] = levelsBySubject[subject as SubjectKey] || [];
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Easy": return "bg-green-500/10 text-green-700";
@@ -51,6 +39,7 @@ export default function LevelSelection({ subject, onLevelSelect, onBack }: Level
   };
 
   return (
+      <LayoutWithMenu onLogout={onLogout}>
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
@@ -66,7 +55,7 @@ export default function LevelSelection({ subject, onLevelSelect, onBack }: Level
         </div>
 
         <div className="grid gap-6">
-          {levels.map((level) => (
+          {levels.map((level: Level) => (
             <Card 
               key={level.id}
               className="hover-elevate cursor-pointer transition-all"
@@ -118,5 +107,6 @@ export default function LevelSelection({ subject, onLevelSelect, onBack }: Level
         </div>
       </div>
     </div>
+    </LayoutWithMenu>
   );
 }

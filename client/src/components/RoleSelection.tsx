@@ -2,14 +2,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import LayoutWithMenu from "@/components/LayoutWithMenu";
 
 interface RoleSelectionProps {
   onRoleSelect: (role: "tutor" | "student") => void;
+  onLogout: () => void;
 }
 
-export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
+export default function RoleSelection({ onRoleSelect ,onLogout }: RoleSelectionProps) {
   const { t } = useTranslation();
   return (
+    <LayoutWithMenu onLogout={onLogout}>
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
@@ -64,5 +67,6 @@ export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
         </div>
       </div>
     </div>
+    </LayoutWithMenu>
   );
 }

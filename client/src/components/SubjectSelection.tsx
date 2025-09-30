@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, Code, Languages, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import LayoutWithMenu from "@/components/LayoutWithMenu";
 
 const getSubjects = (t: any) => [
   {
@@ -10,15 +11,13 @@ const getSubjects = (t: any) => [
     name: t('mathematics'),
     description: t('math_description'),
     icon: Calculator,
-    levels: [t('beginner'), t('intermediate'), t('advanced')],
     color: "bg-blue-500/10 text-blue-700"
   },
   {
     id: "programming",
-    name: t('programming'), 
+    name: t('programming'),
     description: t('programming_description'),
     icon: Code,
-    levels: [t('beginner'), t('intermediate'), t('advanced')],
     color: "bg-green-500/10 text-green-700"
   },
   {
@@ -26,7 +25,6 @@ const getSubjects = (t: any) => [
     name: t('languages'),
     description: t('languages_description'),
     icon: Languages,
-    levels: [t('beginner'), t('intermediate'), t('advanced')],
     color: "bg-purple-500/10 text-purple-700"
   }
 ];
@@ -34,12 +32,15 @@ const getSubjects = (t: any) => [
 interface SubjectSelectionProps {
   userRole: "tutor" | "student";
   onSubjectSelect: (subjectId: string) => void;
+  onLogout: () => void;
 }
 
-export default function SubjectSelection({ userRole, onSubjectSelect }: SubjectSelectionProps) {
+export default function SubjectSelection({ userRole, onSubjectSelect , onLogout }: SubjectSelectionProps) {
   const { t } = useTranslation();
   const subjects = getSubjects(t);
+
   return (
+    <LayoutWithMenu onLogout={onLogout}>
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
@@ -69,13 +70,6 @@ export default function SubjectSelection({ userRole, onSubjectSelect }: SubjectS
                   <CardDescription>{subject.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {subject.levels.map((level) => (
-                      <Badge key={level} variant="secondary" className="text-xs">
-                        {level}
-                      </Badge>
-                    ))}
-                  </div>
                   <Button 
                     variant="outline" 
                     className="w-full"
@@ -90,5 +84,6 @@ export default function SubjectSelection({ userRole, onSubjectSelect }: SubjectS
         </div>
       </div>
     </div>
+    </LayoutWithMenu>
   );
 }

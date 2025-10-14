@@ -106,10 +106,11 @@ function Router() {
 
   if (appState.selectedSubject && !appState.selectedLevel) {
     return (
-      <LevelSelection 
+      <LevelSelection
         subject={appState.selectedSubject}
         onLevelSelect={handleLevelSelect}
         onBack={handleBack}
+        onLogout={handleLogout}
       />
     );
   }
@@ -121,6 +122,7 @@ function Router() {
         level={appState.selectedLevel}
         onChapterSelect={handleChapterSelect}
         onBack={handleBack}
+        onLogout={handleLogout}
       />
     );
   }

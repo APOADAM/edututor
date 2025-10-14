@@ -16,7 +16,7 @@ import LessonInterface from "@/components/LessonInterface";
 import NotFound from "@/pages/not-found";
 
 type AppState = {
-  user: { username: string; role: "tutor" | "student" } | null;
+  user: { username: string; role: "tutor" | "student" | "creator" } | null;
   selectedSubject: string | null;
   selectedLevel: string | null;
   selectedChapter: string | null;
@@ -41,7 +41,7 @@ function Router() {
     }));
   };
 
-  const handleRoleSelect = (role: "tutor" | "student") => {
+  const handleRoleSelect = (role: "tutor" | "student" | "creator") => {
     setAppState(prev => ({
       ...prev,
       user: prev.user ? { ...prev.user, role } : null
@@ -93,15 +93,15 @@ function Router() {
       if (appState.user.username && !appState.selectedSubject) {
         const needsRoleSelection = !appState.user.role || appState.user.role === "student";
         if (needsRoleSelection && !appState.selectedSubject) {
-          return <RoleSelection onRoleSelect={handleRoleSelect} />;
+          return <RoleSelection onRoleSelect={handleRoleSelect} onLogout={handleLogout} />;
         }
       }
-      return <SubjectSelection userRole={appState.user.role} onSubjectSelect={handleSubjectSelect} />;
+      return <SubjectSelection userRole={appState.user.role} onSubjectSelect={handleSubjectSelect} onLogout={handleLogout} />;
     }
   }
 
   if (appState.user.role && !appState.selectedSubject) {
-    return <SubjectSelection userRole={appState.user.role} onSubjectSelect={handleSubjectSelect} />;
+    return <SubjectSelection userRole={appState.user.role} onSubjectSelect={handleSubjectSelect} onLogout={handleLogout} />;
   }
 
   if (appState.selectedSubject && !appState.selectedLevel) {

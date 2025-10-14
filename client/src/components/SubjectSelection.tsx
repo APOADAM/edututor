@@ -30,7 +30,7 @@ const getSubjects = (t: any) => [
 ];
 
 interface SubjectSelectionProps {
-  userRole: "tutor" | "student";
+  userRole: "tutor" | "student" | "creator";
   onSubjectSelect: (subjectId: string) => void;
   onLogout: () => void;
 }

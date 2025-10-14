@@ -9,5 +9,9 @@ export default function LevelSelectionExample() {
     console.log('Back clicked');
   };
 
-  return <LevelSelection subject="mathematics" onLevelSelect={handleLevelSelect} onBack={handleBack} />;
+  const handleLogout = () => {
+    console.log('Logout');
+  };
+
+  return <LevelSelection subject="mathematics" onLevelSelect={handleLevelSelect} onBack={handleBack} onLogout={handleLogout} />;
 }

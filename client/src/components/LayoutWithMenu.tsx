@@ -40,9 +40,7 @@ export default function LayoutWithMenu({ children, onLogout }: LayoutWithMenuPro
           <LanguageSelector />
 
           {/* Dark/Light mode toggle */}
-          <Button variant="ghost" size="sm" onClick={toggleDarkMode}>
-            <ThemeToggle />
-          </Button>
+          <ThemeToggle />
 
           {/* Settings */}
           <Button variant="ghost" size="sm">

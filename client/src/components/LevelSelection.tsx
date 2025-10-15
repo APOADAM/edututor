@@ -40,7 +40,16 @@ export default function LevelSelection({ subject, onLevelSelect, onBack , onLogo
 
   return (
       <LayoutWithMenu onLogout={onLogout}>
-    <div className="min-h-screen bg-background p-6">
+    <div
+      className="min-h-screen bg-background p-6"
+      style={{
+        minHeight: '989px',
+        backgroundImage: 'url(https://cdn.builder.io/api/v1/image/assets%2Fce9f82b5a9f24329aefbdd00cf992381%2F70f0901593b6483992345b178193357b)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+      }}
+    >
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={onBack} data-testid="button-back">

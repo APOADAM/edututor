@@ -45,7 +45,15 @@ export default function LayoutWithMenu({ children, onLogout }: LayoutWithMenuPro
       </header>
 
       {/* Main content */}
-      <main className="flex-1 p-4">
+      <main
+        className="flex-1 p-4"
+        style={{
+          backgroundImage: 'url(https://cdn.builder.io/api/v1/image/assets%2Fce9f82b5a9f24329aefbdd00cf992381%2F70f0901593b6483992345b178193357b)',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+        }}
+      >
         {children}
       </main>
     </div>

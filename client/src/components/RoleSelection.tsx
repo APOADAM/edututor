@@ -13,7 +13,15 @@ export default function RoleSelection({ onRoleSelect ,onLogout }: RoleSelectionP
   const { t } = useTranslation();
   return (
     <LayoutWithMenu onLogout={onLogout}>
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div
+      className="min-h-screen flex items-center justify-center bg-background p-4"
+      style={{
+        backgroundImage: 'url(https://cdn.builder.io/api/v1/image/assets%2Fce9f82b5a9f24329aefbdd00cf992381%2F70f0901593b6483992345b178193357b)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+      }}
+    >
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-semibold mb-2">{t('select_role')}</h1>
@@ -78,7 +86,7 @@ export default function RoleSelection({ onRoleSelect ,onLogout }: RoleSelectionP
                 variant="outline"
                 data-testid="button-select-course-creator"
               >
-                Continue as Course Creator
+                Create
               </Button>
             </CardContent>
           </Card>

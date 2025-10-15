@@ -18,13 +18,13 @@ const resources = {
       
       // Role Selection
       "select_role": "Select Your Role",
-      "role_description": "Choose how you'll be using the platform today",
+      "role_description": "Choose how you'll be using the platform\u00A0",
       "im_tutor": "I'm a Tutor",
       "im_student": "I'm a Student",
       "tutor_description": "Teach students with interactive lessons and real-time notepad tools",
       "student_description": "Learn through interactive exercises and engaging lesson content",
-      "continue_as_tutor": "Continue as Tutor",
-      "continue_as_student": "Continue as Student",
+      "continue_as_tutor": "Tutor",
+      "continue_as_student": "Student",
       
       // Subject Selection
       "choose_subject": "Choose a Subject",
@@ -119,7 +119,7 @@ const resources = {
       "enter_password": "Εισάγετε τον κωδικό πρόσβασης σας",
       
       // Role Selection  
-      "select_role": "Επιλέξτε τον Ρόλο σας",
+      "select_role": "Επι��έξτε τον Ρόλο σας",
       "role_description": "Επιλέξτε πως θα χρησιμοποιήσετε την πλατφόρμα σήμερα",
       "im_tutor": "Είμαι Καθηγητής",
       "im_student": "Είμαι Μαθητής",
@@ -136,7 +136,7 @@ const resources = {
       
       // Subjects
       "mathematics": "Μαθηματικά",
-      "math_description": "Άλγεβρα, Γεωμετρία, Λογισμός και άλλα",
+      "math_description": "Άλγεβρ��, Γεωμετρία, Λογισμός και άλλα",
       "programming": "Προγραμματισμός Υπολογιστών",
       "programming_description": "Μάθετε τα βασικά του προγραμματισμού και προχωρημένες έννοιες",
       "languages": "Εκμάθηση Γλωσσών",

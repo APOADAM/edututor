@@ -22,82 +22,62 @@ interface ChapterSelectionProps {
 }
 
 export default function ChapterSelection({ subject, level, onChapterSelect, onBack, onLogout }: ChapterSelectionProps) {
-  return (
-    <LayoutWithMenu onLogout={onLogout}>
-      <div
-        className="min-h-screen bg-background p-6"
-        style={{
-          minHeight: '991px',
-          backgroundImage: 'url(https://cdn.builder.io/api/v1/image/assets%2Fce9f82b5a9f24329aefbdd00cf992381%2F70f0901593b6483992345b178193357b)',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-        }}
-      >
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" size="icon" onClick={onBack}>
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-semibold capitalize">{subject} - {level}</h1>
-              <p className="text-muted-foreground">
-                Select a chapter to begin your learning journey
-              </p>
-            </div>
-          </div>
+  // Υπολογίζουμε συνολικό progress των chapters
+  const totalProgress = chapters.reduce((sum, ch) => sum + ch.progress, 0) / chapters.length;
 
-          <div className="grid gap-4">
-            {chapters.map((chapter, index) => (
-              <Card 
-                key={chapter.id}
-                className={`transition-all ${chapter.isUnlocked ? "hover-elevate cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
-                onClick={() => chapter.isUnlocked && onChapterSelect(chapter.id)}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-muted text-sm font-medium">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <CardTitle className="text-lg">{chapter.name}</CardTitle>
-                        </div>
-                        <CardDescription>{chapter.description}</CardDescription>
-                      </div>
+  return (
+    <LayoutWithMenu
+      onLogout={onLogout}
+      pageName={`${subject} - ${level}`}
+      showProgress={true}
+      progressValue={totalProgress}
+      homeButtonOnClick={onBack} // ή router.push("/dashboard")
+    >
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h2 className="text-3xl font-semibold capitalize">{subject} - {level}</h2>
+          <p className="text-muted-foreground">Select a chapter to begin your learning journey</p>
+        </div>
+
+        <div className="grid gap-4">
+          {chapters.map((chapter, index) => (
+            <Card 
+              key={chapter.id}
+              className={`transition-all ${chapter.isUnlocked ? "hover-elevate cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+              onClick={() => chapter.isUnlocked && onChapterSelect(chapter.id)}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-muted text-sm font-medium">
+                      {index + 1}
                     </div>
-                    <div className="text-right">
-                      <Badge variant={chapter.isCompleted ? "default" : "secondary"}>
-                        {chapter.isCompleted ? "Completed" : chapter.isUnlocked ? "Available" : "Locked"}
-                      </Badge>
+                    <div className="flex-1">
+                      <CardTitle className="text-lg">{chapter.name}</CardTitle>
+                      <CardDescription>{chapter.description}</CardDescription>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between mb-3 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <span>{chapter.lessons} lessons</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>{chapter.duration}</span>
-                      </div>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{chapter.progress}% complete</span>
-                  </div>
-                  <Progress value={chapter.progress} className="mb-4" />
-                  <Button 
-                    variant={chapter.isCompleted ? "secondary" : "default"}
-                    disabled={!chapter.isUnlocked}
-                    className="w-full md:w-auto"
-                  >
-                    {chapter.isCompleted ? "Review Chapter" : "Start Chapter"}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <Badge variant={chapter.isCompleted ? "default" : "secondary"}>
+                    {chapter.isCompleted ? "Completed" : chapter.isUnlocked ? "Available" : "Locked"}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-3 text-sm text-muted-foreground">
+                  <span>{chapter.lessons} lessons • {chapter.duration}</span>
+                  <span>{chapter.progress}% complete</span>
+                </div>
+                <Progress value={chapter.progress} className="mb-4" />
+                <Button 
+                  variant={chapter.isCompleted ? "secondary" : "default"}
+                  disabled={!chapter.isUnlocked}
+                  className="w-full md:w-auto"
+                >
+                  {chapter.isCompleted ? "Review Chapter" : "Start Chapter"}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </LayoutWithMenu>

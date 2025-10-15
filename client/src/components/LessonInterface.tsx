@@ -82,9 +82,10 @@ const lessonData = {
 interface LessonInterfaceProps {
   userRole: "tutor" | "student" | "creator";
   onLogout: () => void;
+  onHome: () => void;
 }
 
-export default function LessonInterface({ userRole, onLogout }: LessonInterfaceProps) {
+export default function LessonInterface({ userRole, onLogout, onHome }: LessonInterfaceProps) {
   const [currentSubchapter, setCurrentSubchapter] = useState("fractions");
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor" || userRole === "creator");
@@ -119,12 +120,19 @@ export default function LessonInterface({ userRole, onLogout }: LessonInterfaceP
           >
             {showLeftPanel ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
           </Button>
-          <Button variant="ghost" size="icon" data-testid="button-home">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onHome}     // ✅ τώρα γυρνάει πίσω
+            data-testid="button-home"
+          >
             <Home className="w-5 h-5" />
           </Button>
           <div>
             <h1 className="font-semibold">EduTutor</h1>
-            <p className="text-sm text-muted-foreground">{t('mathematics')} • {t('beginner')} • {t('basic_numbers')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t('mathematics')} • {t('beginner')} • {t('basic_numbers')}
+            </p>
           </div>
         </div>
         

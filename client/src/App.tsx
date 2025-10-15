@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -16,7 +15,7 @@ import LessonInterface from "@/components/LessonInterface";
 import NotFound from "@/pages/not-found";
 
 type AppState = {
-  user: { username: string; role: "tutor" | "student" | "creator" } | null;
+  user: { username: string; role: "tutor" | "student" } | null;
   selectedSubject: string | null;
   selectedLevel: string | null;
   selectedChapter: string | null;
@@ -30,18 +29,17 @@ function Router() {
     selectedChapter: null
   });
 
-  // Authentication flow
+  // --- Handlers ---
   const handleLogin = (username: string, password: string) => {
     console.log("Login attempt:", { username, password });
-    // In a real app, this would validate credentials
-    // For demo, we'll just move to role selection
+    // Dummy login
     setAppState(prev => ({ 
       ...prev, 
-      user: { username, role: "student" } // Temporary, will be set by role selection
+      user: { username, role: "student" } 
     }));
   };
 
-  const handleRoleSelect = (role: "tutor" | "student" | "creator") => {
+  const handleRoleSelect = (role: "tutor" | "student") => {
     setAppState(prev => ({
       ...prev,
       user: prev.user ? { ...prev.user, role } : null
@@ -81,32 +79,47 @@ function Router() {
     }
   };
 
-  // Render based on current state
+  const handleHome = () => {
+    // 👈 αυτό θα σε πηγαίνει πίσω στο ChapterSelection
+    setAppState(prev => ({ ...prev, selectedChapter: null }));
+  };
+
+  // --- Render based on current state ---
   if (!appState.user) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
   if (!appState.user.role || appState.user.role === "student") {
-    // For demo purposes, we'll show role selection if role isn't properly set
     if (!appState.selectedSubject) {
-      // First check if we need role selection
       if (appState.user.username && !appState.selectedSubject) {
         const needsRoleSelection = !appState.user.role || appState.user.role === "student";
         if (needsRoleSelection && !appState.selectedSubject) {
           return <RoleSelection onRoleSelect={handleRoleSelect} onLogout={handleLogout} />;
         }
       }
-      return <SubjectSelection userRole={appState.user.role} onSubjectSelect={handleSubjectSelect} onLogout={handleLogout} />;
+      return (
+        <SubjectSelection 
+          userRole={appState.user.role} 
+          onSubjectSelect={handleSubjectSelect} 
+          onLogout={handleLogout} 
+        />
+      );
     }
   }
 
   if (appState.user.role && !appState.selectedSubject) {
-    return <SubjectSelection userRole={appState.user.role} onSubjectSelect={handleSubjectSelect} onLogout={handleLogout} />;
+    return (
+      <SubjectSelection 
+        userRole={appState.user.role} 
+        onSubjectSelect={handleSubjectSelect} 
+        onLogout={handleLogout} 
+      />
+    );
   }
 
   if (appState.selectedSubject && !appState.selectedLevel) {
     return (
-      <LevelSelection
+      <LevelSelection 
         subject={appState.selectedSubject}
         onLevelSelect={handleLevelSelect}
         onBack={handleBack}
@@ -132,6 +145,7 @@ function Router() {
       <LessonInterface
         userRole={appState.user.role}
         onLogout={handleLogout}
+        onHome={handleHome}   // 👈 περνάμε το Home handler
       />
     );
   }

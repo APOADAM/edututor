@@ -80,7 +80,7 @@ const lessonData = {
 };
 
 interface LessonInterfaceProps {
-  userRole: "tutor" | "student";
+  userRole: "tutor" | "student" | "creator";
   onLogout: () => void;
   onHome: () => void;
 }
@@ -88,7 +88,7 @@ interface LessonInterfaceProps {
 export default function LessonInterface({ userRole, onLogout, onHome }: LessonInterfaceProps) {
   const [currentSubchapter, setCurrentSubchapter] = useState("fractions");
   const [showLeftPanel, setShowLeftPanel] = useState(true);
-  const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor");
+  const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor" || userRole === "creator");
   const { t } = useTranslation();
   
   const subchapterIds = Object.keys(lessonData);
@@ -168,7 +168,7 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
             />
           }
           rightPanel={
-            userRole === "tutor" ? (
+            userRole === "tutor" || userRole === "creator" ? (
               <TutorNotepad isVisible={true} />
             ) : undefined
           }

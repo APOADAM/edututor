@@ -2,14 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Pen, 
-  Eraser, 
-  Type, 
-  Palette, 
-  RotateCcw, 
+import {
+  Pen,
+  Eraser,
+  Type,
   Download,
-  Trash2
+  Trash2,
+  Plus
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -33,7 +32,7 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
   const [tool, setTool] = useState<"pen" | "eraser" | "text">("pen");
   const [currentColor, setCurrentColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(3);
-  const [notes, setNotes] = useState("");
+  const [pages, setPages] = useState<string[]>([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -119,57 +118,89 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
 
   if (!isVisible) return null;
 
+  const finishPageAndNew = () => {
+    if (!canvasRef.current) return;
+    const data = canvasRef.current.toDataURL();
+    setPages((prev) => [...prev, data]);
+    clearCanvas();
+  };
+
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg">{t('tutor_notepad')}</CardTitle>
+      <CardHeader className="pb-3 border-b">
+        <div className="flex flex-wrap items-center gap-2 justify-between">
+          <CardTitle className="text-lg mr-2">{t('tutor_notepad')}</CardTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant={tool === "pen" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTool("pen")}
+              data-testid="button-tool-pen"
+            >
+              <Pen className="w-4 h-4" />
+            </Button>
+            <Button
+              variant={tool === "eraser" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTool("eraser")}
+              data-testid="button-tool-eraser"
+            >
+              <Eraser className="w-4 h-4" />
+            </Button>
+            <Button
+              variant={tool === "text" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTool("text")}
+              data-testid="button-tool-text"
+            >
+              <Type className="w-4 h-4" />
+            </Button>
+            <div className="flex items-center gap-1">
+              {colors.map((color) => (
+                <button
+                  key={color}
+                  className={`w-5 h-5 rounded border-2 ${
+                    currentColor === color ? "border-foreground" : "border-border"
+                  }`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setCurrentColor(color)}
+                  data-testid={`button-color-${color}`}
+                  aria-label={`color-${color}`}
+                />
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={downloadCanvas}
+              data-testid="button-download-canvas"
+              aria-label="download"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearCanvas}
+              data-testid="button-clear-canvas"
+              aria-label="delete"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={finishPageAndNew}
+              data-testid="button-new-page"
+            >
+              <Plus className="w-4 h-4 mr-1" /> New Page
+            </Button>
+            <span className="text-xs text-muted-foreground ml-2">Page {pages.length + 1}</span>
+          </div>
+        </div>
       </CardHeader>
-      
+
       <CardContent className="flex-1 flex flex-col gap-4 p-4">
-        {/* Drawing Tools */}
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant={tool === "pen" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTool("pen")}
-            data-testid="button-tool-pen"
-          >
-            <Pen className="w-4 h-4" />
-          </Button>
-          <Button
-            variant={tool === "eraser" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTool("eraser")}
-            data-testid="button-tool-eraser"
-          >
-            <Eraser className="w-4 h-4" />
-          </Button>
-          <Button
-            variant={tool === "text" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTool("text")}
-            data-testid="button-tool-text"
-          >
-            <Type className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Color Palette */}
-        <div className="flex flex-wrap gap-1">
-          {colors.map((color) => (
-            <button
-              key={color}
-              className={`w-6 h-6 rounded border-2 ${
-                currentColor === color ? "border-foreground" : "border-border"
-              }`}
-              style={{ backgroundColor: color }}
-              onClick={() => setCurrentColor(color)}
-              data-testid={`button-color-${color}`}
-            />
-          ))}
-        </div>
-
-        {/* Brush Size */}
         <div className="flex items-center gap-2">
           <span className="text-sm">{t('size')}:</span>
           <input
@@ -184,10 +215,7 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
           <span className="text-sm w-6">{brushSize}</span>
         </div>
 
-        <Separator />
-
-        {/* Canvas */}
-        <div className="flex-1 border rounded-lg overflow-hidden bg-white">
+        <div className="flex-1 border rounded-lg overflow-hidden bg-white min-h-[600px]">
           <canvas
             ref={canvasRef}
             className="w-full h-full cursor-crosshair"
@@ -196,40 +224,6 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
             onMouseUp={stopDrawing}
             onMouseLeave={stopDrawing}
             data-testid="canvas-drawing"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearCanvas}
-            data-testid="button-clear-canvas"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={downloadCanvas}
-            data-testid="button-download-canvas"
-          >
-            <Download className="w-4 h-4" />
-          </Button>
-        </div>
-
-        <Separator />
-
-        {/* Text Notes */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t('quick_notes')}</label>
-          <textarea
-            placeholder={t('add_notes')}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full h-24 p-2 border rounded-md text-sm resize-none"
-            data-testid="textarea-notes"
           />
         </div>
       </CardContent>

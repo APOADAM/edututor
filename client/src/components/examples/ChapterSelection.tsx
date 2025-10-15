@@ -9,12 +9,17 @@ export default function ChapterSelectionExample() {
     console.log('Back clicked');
   };
 
+  const handleLogout = () => {
+    console.log('Logout');
+  };
+
   return (
-    <ChapterSelection 
-      subject="mathematics" 
-      level="beginner" 
-      onChapterSelect={handleChapterSelect} 
-      onBack={handleBack} 
+    <ChapterSelection
+      subject="mathematics"
+      level="beginner"
+      onChapterSelect={handleChapterSelect}
+      onBack={handleBack}
+      onLogout={handleLogout}
     />
   );
 }

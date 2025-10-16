@@ -39,14 +39,14 @@ export default function RightSidebar({ classes = [], onAddClass, onClassClick }:
   };
 
   return (
-    <div className="w-64 bg-card border-l border-card-border flex flex-col h-full">
+    <div className="w-64 bg-card/30 backdrop-blur border-l border-card-border/30 flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-card-border">
+      <div className="p-4 border-b border-card-border/30">
         <h2 className="text-sm font-semibold">My Classes</h2>
       </div>
 
       {/* Add Class Button */}
-      <div className="p-4 border-b border-card-border">
+      <div className="p-4 border-b border-card-border/30">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full gap-2">

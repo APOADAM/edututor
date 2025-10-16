@@ -7,6 +7,7 @@ import { ChevronLeft } from "lucide-react";
 import LayoutWithMenu from "@/components/LayoutWithMenu";
 import LeftSidebar, { User } from "@/components/LeftSidebar";
 import RightSidebar, { Class } from "@/components/RightSidebar";
+import ClassActionsModal from "@/components/ClassActionsModal";
 
 // Mock data
 const chapters = [
@@ -27,6 +28,8 @@ interface ChapterSelectionProps {
 export default function ChapterSelection({ subject, level, onChapterSelect, onBack, onLogout }: ChapterSelectionProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Υπολογίζουμε συνολικό progress των chapters
   const totalProgress = chapters.reduce((sum, ch) => sum + ch.progress, 0) / chapters.length;
@@ -49,6 +52,38 @@ export default function ChapterSelection({ subject, level, onChapterSelect, onBa
       createdAt: new Date().toLocaleDateString()
     };
     setClasses([...classes, newClass]);
+  };
+
+  const handleClassClick = (classItem: Class) => {
+    setSelectedClass(classItem);
+    setIsModalOpen(true);
+  };
+
+  const handleGoLive = () => {
+    console.log("Going live on class:", selectedClass?.name);
+  };
+
+  const handleShowMembers = () => {
+    console.log("Showing members for class:", selectedClass?.name);
+  };
+
+  const handleAddConnectionToClass = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    if (user && selectedClass) {
+      console.log(`Added ${user.name} to class ${selectedClass.name}`);
+      setClasses(classes.map(c =>
+        c.id === selectedClass.id
+          ? { ...c, studentsCount: c.studentsCount + 1 }
+          : c
+      ));
+    }
+  };
+
+  const handleDeleteClass = () => {
+    if (selectedClass) {
+      setClasses(classes.filter(c => c.id !== selectedClass.id));
+      setIsModalOpen(false);
+    }
   };
 
   return (
@@ -110,7 +145,17 @@ export default function ChapterSelection({ subject, level, onChapterSelect, onBa
             </div>
           </div>
         </div>
-        <RightSidebar classes={classes} onAddClass={handleAddClass} />
+        <RightSidebar classes={classes} onAddClass={handleAddClass} onClassClick={handleClassClick} />
+        <ClassActionsModal
+          classItem={selectedClass}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onGoLive={handleGoLive}
+          onShowMembers={handleShowMembers}
+          onAddConnection={handleAddConnectionToClass}
+          onDeleteClass={handleDeleteClass}
+          availableUsers={users}
+        />
       </div>
     </LayoutWithMenu>
   );

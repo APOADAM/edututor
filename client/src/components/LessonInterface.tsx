@@ -6,6 +6,8 @@ import LessonSidebar from "./LessonSidebar";
 import LessonContent from "./LessonContent";
 import TutorNotepad from "./TutorNotepad";
 import ResizableLayout from "./ResizableLayout";
+import LeftSidebar, { User } from "./LeftSidebar";
+import RightSidebar, { Class } from "./RightSidebar";
 import { LogOut, Home, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -89,6 +91,8 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
   const [currentSubchapter, setCurrentSubchapter] = useState("fractions");
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor" || userRole === "creator");
+  const [users, setUsers] = useState<User[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
   const { t } = useTranslation();
   
   const subchapterIds = Object.keys(lessonData);
@@ -105,6 +109,26 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
     if (currentIndex < subchapterIds.length - 1) {
       setCurrentSubchapter(subchapterIds[currentIndex + 1]);
     }
+  };
+
+  const handleAddUser = (name: string, role: "teacher" | "student") => {
+    const newUser: User = {
+      id: Date.now().toString(),
+      name,
+      role,
+      status: "online"
+    };
+    setUsers([...users, newUser]);
+  };
+
+  const handleAddClass = (name: string) => {
+    const newClass: Class = {
+      id: Date.now().toString(),
+      name,
+      studentsCount: 0,
+      createdAt: new Date().toLocaleDateString()
+    };
+    setClasses([...classes, newClass]);
   };
 
   return (
@@ -150,35 +174,39 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
-        <ResizableLayout
-          leftPanel={
-            <LessonSidebar 
-              currentSubchapter={currentSubchapter}
-              onSubchapterSelect={setCurrentSubchapter}
-            />
-          }
-          centerPanel={
-            <LessonContent
-              subchapter={currentLesson}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-              canGoBack={currentIndex > 0}
-              canGoForward={currentIndex < subchapterIds.length - 1}
-            />
-          }
-          rightPanel={
-            userRole === "tutor" || userRole === "creator" ? (
-              <TutorNotepad isVisible={true} />
-            ) : undefined
-          }
-          showLeftPanel={showLeftPanel}
-          showRightPanel={showRightPanel}
-          leftPanelDefaultSize={20}
-          rightPanelDefaultSize={25}
-          leftPanelMinSize={15}
-          rightPanelMinSize={20}
-        />
+      <div className="flex-1 overflow-hidden flex">
+        <LeftSidebar users={users} onAddUser={handleAddUser} />
+        <div className="flex-1 overflow-hidden">
+          <ResizableLayout
+            leftPanel={
+              <LessonSidebar
+                currentSubchapter={currentSubchapter}
+                onSubchapterSelect={setCurrentSubchapter}
+              />
+            }
+            centerPanel={
+              <LessonContent
+                subchapter={currentLesson}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                canGoBack={currentIndex > 0}
+                canGoForward={currentIndex < subchapterIds.length - 1}
+              />
+            }
+            rightPanel={
+              userRole === "tutor" || userRole === "creator" ? (
+                <TutorNotepad isVisible={true} />
+              ) : undefined
+            }
+            showLeftPanel={showLeftPanel}
+            showRightPanel={showRightPanel}
+            leftPanelDefaultSize={20}
+            rightPanelDefaultSize={25}
+            leftPanelMinSize={15}
+            rightPanelMinSize={20}
+          />
+        </div>
+        <RightSidebar classes={classes} onAddClass={handleAddClass} />
       </div>
     </div>
   );

@@ -93,6 +93,8 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
   const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor" || userRole === "creator");
   const [users, setUsers] = useState<User[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
+  const [showLeftSidebar, setShowLeftSidebar] = useState(false);
+  const [showRightSidebar, setShowRightSidebar] = useState(false);
   const { t } = useTranslation();
   
   const subchapterIds = Object.keys(lessonData);

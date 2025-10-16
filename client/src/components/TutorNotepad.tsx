@@ -53,34 +53,43 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, [isVisible]);
 
+  const getCanvasCoordinates = (e: React.MouseEvent) => {
+    if (!canvasRef.current) return null;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    return { x, y };
+  };
+
   const startDrawing = (e: React.MouseEvent) => {
     if (tool !== "pen" && tool !== "eraser") return;
-    
+
     setIsDrawing(true);
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect || !canvasRef.current) return;
+    const coords = getCanvasCoordinates(e);
+    if (!coords || !canvasRef.current) return;
 
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
     ctx.beginPath();
-    ctx.moveTo(x, y);
+    ctx.moveTo(coords.x, coords.y);
   };
 
   const draw = (e: React.MouseEvent) => {
     if (!isDrawing || !canvasRef.current) return;
-    
-    const rect = canvasRef.current.getBoundingClientRect();
-    if (!rect) return;
+
+    const coords = getCanvasCoordinates(e);
+    if (!coords) return;
 
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
 
     if (tool === "eraser") {
       ctx.globalCompositeOperation = "destination-out";
@@ -91,7 +100,7 @@ export default function TutorNotepad({ isVisible }: TutorNotepadProps) {
       ctx.lineWidth = brushSize;
     }
 
-    ctx.lineTo(x, y);
+    ctx.lineTo(coords.x, coords.y);
     ctx.stroke();
   };
 

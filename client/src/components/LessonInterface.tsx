@@ -8,6 +8,7 @@ import TutorNotepad from "./TutorNotepad";
 import ResizableLayout from "./ResizableLayout";
 import LeftSidebar, { User } from "./LeftSidebar";
 import RightSidebar, { Class } from "./RightSidebar";
+import ClassActionsModal from "./ClassActionsModal";
 import { LogOut, Home, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -95,6 +96,8 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
   const [classes, setClasses] = useState<Class[]>([]);
   const [showLeftSidebar, setShowLeftSidebar] = useState(false);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useTranslation();
   
   const subchapterIds = Object.keys(lessonData);
@@ -131,6 +134,38 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
       createdAt: new Date().toLocaleDateString()
     };
     setClasses([...classes, newClass]);
+  };
+
+  const handleClassClick = (classItem: Class) => {
+    setSelectedClass(classItem);
+    setIsModalOpen(true);
+  };
+
+  const handleGoLive = () => {
+    console.log("Going live on class:", selectedClass?.name);
+  };
+
+  const handleShowMembers = () => {
+    console.log("Showing members for class:", selectedClass?.name);
+  };
+
+  const handleAddConnectionToClass = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    if (user && selectedClass) {
+      console.log(`Added ${user.name} to class ${selectedClass.name}`);
+      setClasses(classes.map(c =>
+        c.id === selectedClass.id
+          ? { ...c, studentsCount: c.studentsCount + 1 }
+          : c
+      ));
+    }
+  };
+
+  const handleDeleteClass = () => {
+    if (selectedClass) {
+      setClasses(classes.filter(c => c.id !== selectedClass.id));
+      setIsModalOpen(false);
+    }
   };
 
   return (
@@ -195,7 +230,7 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden flex">
-        <LeftSidebar users={users} onAddUser={handleAddUser} />
+        {showLeftSidebar && <LeftSidebar users={users} onAddUser={handleAddUser} />}
         <div className="flex-1 overflow-hidden">
           <ResizableLayout
             leftPanel={
@@ -226,7 +261,17 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
             rightPanelMinSize={20}
           />
         </div>
-        <RightSidebar classes={classes} onAddClass={handleAddClass} />
+        {showRightSidebar && <RightSidebar classes={classes} onAddClass={handleAddClass} onClassClick={handleClassClick} />}
+        <ClassActionsModal
+          classItem={selectedClass}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onGoLive={handleGoLive}
+          onShowMembers={handleShowMembers}
+          onAddConnection={handleAddConnectionToClass}
+          onDeleteClass={handleDeleteClass}
+          availableUsers={users}
+        />
       </div>
     </div>
   );

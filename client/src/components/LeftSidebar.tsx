@@ -62,6 +62,11 @@ export default function LeftSidebar({ users = [], onAddUser }: LeftSidebarProps)
 
   return (
     <div className="w-64 bg-card border-r border-card-border flex flex-col h-full">
+      {/* Header */}
+      <div className="p-4 border-b border-card-border">
+        <h2 className="text-sm font-semibold">My Connections</h2>
+      </div>
+
       {/* Add User Button */}
       <div className="p-4 border-b border-card-border">
         <Dialog open={open} onOpenChange={setOpen}>

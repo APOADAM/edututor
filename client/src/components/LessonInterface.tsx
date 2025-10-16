@@ -138,18 +138,18 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
       {/* Header */}
       <header className="border-b px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setShowLeftPanel(!showLeftPanel)}
             data-testid="button-toggle-sidebar"
           >
             {showLeftPanel ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
           </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onHome}     // ✅ τώρα γυρνάει πίσω
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onHome}
             data-testid="button-home"
           >
             <Home className="w-5 h-5" />
@@ -161,8 +161,26 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
             </p>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowLeftSidebar(!showLeftSidebar)}
+              data-testid="button-toggle-connections"
+            >
+              {showLeftSidebar ? "Hide Connections" : "Show Connections"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowRightSidebar(!showRightSidebar)}
+              data-testid="button-toggle-classes"
+            >
+              {showRightSidebar ? "Hide Classes" : "Show Classes"}
+            </Button>
+          </div>
           <span className="text-sm text-muted-foreground capitalize">{userRole}</span>
           <LanguageSelector />
           <ThemeToggle />

@@ -23,9 +23,10 @@ export interface Class {
 interface RightSidebarProps {
   classes?: Class[];
   onAddClass?: (name: string) => void;
+  onClassClick?: (classItem: Class) => void;
 }
 
-export default function RightSidebar({ classes = [], onAddClass }: RightSidebarProps) {
+export default function RightSidebar({ classes = [], onAddClass, onClassClick }: RightSidebarProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
 
@@ -39,6 +40,11 @@ export default function RightSidebar({ classes = [], onAddClass }: RightSidebarP
 
   return (
     <div className="w-64 bg-card border-l border-card-border flex flex-col h-full">
+      {/* Header */}
+      <div className="p-4 border-b border-card-border">
+        <h2 className="text-sm font-semibold">My Classes</h2>
+      </div>
+
       {/* Add Class Button */}
       <div className="p-4 border-b border-card-border">
         <Dialog open={open} onOpenChange={setOpen}>
@@ -82,7 +88,11 @@ export default function RightSidebar({ classes = [], onAddClass }: RightSidebarP
             </p>
           ) : (
             classes.map((classItem) => (
-              <Card key={classItem.id} className="cursor-pointer hover:shadow-md transition-shadow">
+              <Card
+                key={classItem.id}
+                className="cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => onClassClick?.(classItem)}
+              >
                 <CardContent className="p-3">
                   <p className="text-sm font-medium truncate">{classItem.name}</p>
                   <p className="text-xs text-muted-foreground">

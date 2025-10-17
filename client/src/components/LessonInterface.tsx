@@ -6,6 +6,9 @@ import LessonSidebar from "./LessonSidebar";
 import LessonContent from "./LessonContent";
 import TutorNotepad from "./TutorNotepad";
 import ResizableLayout from "./ResizableLayout";
+import LeftSidebar, { User } from "./LeftSidebar";
+import RightSidebar, { Class } from "./RightSidebar";
+import ClassActionsModal from "./ClassActionsModal";
 import { LogOut, Home, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -89,6 +92,12 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
   const [currentSubchapter, setCurrentSubchapter] = useState("fractions");
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(userRole === "tutor" || userRole === "creator");
+  const [users, setUsers] = useState<User[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [showLeftSidebar, setShowLeftSidebar] = useState(false);
+  const [showRightSidebar, setShowRightSidebar] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useTranslation();
   
   const subchapterIds = Object.keys(lessonData);
@@ -107,23 +116,75 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
     }
   };
 
+  const handleAddUser = (name: string, role: "teacher" | "student") => {
+    const newUser: User = {
+      id: Date.now().toString(),
+      name,
+      role,
+      status: "online"
+    };
+    setUsers([...users, newUser]);
+  };
+
+  const handleAddClass = (name: string) => {
+    const newClass: Class = {
+      id: Date.now().toString(),
+      name,
+      studentsCount: 0,
+      createdAt: new Date().toLocaleDateString()
+    };
+    setClasses([...classes, newClass]);
+  };
+
+  const handleClassClick = (classItem: Class) => {
+    setSelectedClass(classItem);
+    setIsModalOpen(true);
+  };
+
+  const handleGoLive = () => {
+    console.log("Going live on class:", selectedClass?.name);
+  };
+
+  const handleShowMembers = () => {
+    console.log("Showing members for class:", selectedClass?.name);
+  };
+
+  const handleAddConnectionToClass = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    if (user && selectedClass) {
+      console.log(`Added ${user.name} to class ${selectedClass.name}`);
+      setClasses(classes.map(c =>
+        c.id === selectedClass.id
+          ? { ...c, studentsCount: c.studentsCount + 1 }
+          : c
+      ));
+    }
+  };
+
+  const handleDeleteClass = () => {
+    if (selectedClass) {
+      setClasses(classes.filter(c => c.id !== selectedClass.id));
+      setIsModalOpen(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
       <header className="border-b px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setShowLeftPanel(!showLeftPanel)}
             data-testid="button-toggle-sidebar"
           >
             {showLeftPanel ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
           </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onHome}     // ✅ τώρα γυρνάει πίσω
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onHome}
             data-testid="button-home"
           >
             <Home className="w-5 h-5" />
@@ -135,8 +196,26 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
             </p>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowLeftSidebar(!showLeftSidebar)}
+              data-testid="button-toggle-connections"
+            >
+              {showLeftSidebar ? "Hide Connections" : "Show Connections"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowRightSidebar(!showRightSidebar)}
+              data-testid="button-toggle-classes"
+            >
+              {showRightSidebar ? "Hide Classes" : "Show Classes"}
+            </Button>
+          </div>
           <span className="text-sm text-muted-foreground capitalize">{userRole}</span>
           <LanguageSelector />
           <ThemeToggle />
@@ -150,34 +229,48 @@ export default function LessonInterface({ userRole, onLogout, onHome }: LessonIn
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
-        <ResizableLayout
-          leftPanel={
-            <LessonSidebar 
-              currentSubchapter={currentSubchapter}
-              onSubchapterSelect={setCurrentSubchapter}
-            />
-          }
-          centerPanel={
-            <LessonContent
-              subchapter={currentLesson}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-              canGoBack={currentIndex > 0}
-              canGoForward={currentIndex < subchapterIds.length - 1}
-            />
-          }
-          rightPanel={
-            userRole === "tutor" || userRole === "creator" ? (
-              <TutorNotepad isVisible={true} />
-            ) : undefined
-          }
-          showLeftPanel={showLeftPanel}
-          showRightPanel={showRightPanel}
-          leftPanelDefaultSize={20}
-          rightPanelDefaultSize={25}
-          leftPanelMinSize={15}
-          rightPanelMinSize={20}
+      <div className="flex-1 overflow-hidden flex">
+        {showLeftSidebar && <LeftSidebar users={users} onAddUser={handleAddUser} />}
+        <div className="flex-1 overflow-hidden">
+          <ResizableLayout
+            leftPanel={
+              <LessonSidebar
+                currentSubchapter={currentSubchapter}
+                onSubchapterSelect={setCurrentSubchapter}
+              />
+            }
+            centerPanel={
+              <LessonContent
+                subchapter={currentLesson}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                canGoBack={currentIndex > 0}
+                canGoForward={currentIndex < subchapterIds.length - 1}
+              />
+            }
+            rightPanel={
+              userRole === "tutor" || userRole === "creator" ? (
+                <TutorNotepad isVisible={true} />
+              ) : undefined
+            }
+            showLeftPanel={showLeftPanel}
+            showRightPanel={showRightPanel}
+            leftPanelDefaultSize={20}
+            rightPanelDefaultSize={25}
+            leftPanelMinSize={15}
+            rightPanelMinSize={20}
+          />
+        </div>
+        {showRightSidebar && <RightSidebar classes={classes} onAddClass={handleAddClass} onClassClick={handleClassClick} />}
+        <ClassActionsModal
+          classItem={selectedClass}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onGoLive={handleGoLive}
+          onShowMembers={handleShowMembers}
+          onAddConnection={handleAddConnectionToClass}
+          onDeleteClass={handleDeleteClass}
+          availableUsers={users}
         />
       </div>
     </div>
